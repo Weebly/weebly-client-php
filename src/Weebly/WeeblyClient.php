@@ -33,10 +33,12 @@ class WeeblyClient
 	/**
 	 * Creates a new API interaction object.
 	 *
-	 * @param $client_id       Your application client_id
-	 * @param $client_secret   Your application client_secret
-	 * @param $user_id         The Weebly User Id
-	 * @param $site_id         The Weebly Site Id
+	 * @param string $client_id                Your application client_id
+	 * @param string $client_secret            Your application client_secret
+	 * @param int $user_id                     The Weebly User Id
+	 * @param (optional) int $site_id          The Weebly Site Id
+	 * @param (optional) string $access_token  The Weebly User's API access token used for accessing
+	 *                                         data from already permitted users
 	 *
 	 * @return instance
 	 */
