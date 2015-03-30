@@ -5,6 +5,11 @@ namespace Weebly;
 class WeeblyClient 
 {
 	/**
+	 * Weebly API domain
+	 */
+	const WEEBLY_API_DOMAIN = 'http://bryanashley.dev.weebly.net';
+
+	/**
 	 * Weebly User Id
 	 */
 	public $user_id;
@@ -64,7 +69,23 @@ class WeeblyClient
 	 */
 	public function getAuthorizationUrl($scope=array(), $redirect_uri=null)
 	{
+		$authorization_url = self::WEEBLY_API_DOMAIN.'/marketplace/oauth/authorize';
+		$parameters = '?client_id='.$this->client_id.'&user_id='.$this->user_id;
 
+		if (isset($this->site_id) === true) {
+			$parameters .= '&site_id='.$this->site_id;
+		}
+
+		if (isset($redirect_uri) === true) {
+			$parameters .= '&redirect_uri='.$redirect_uri;
+		}
+
+		if (is_array($scope) === true) {
+			$scope_parameters = implode(',', $scope);
+			$parameters .= '&scope='.$scope_parameters;
+		}
+
+		return $authorization_url.$parameters;
 	}
 
 	/**
