@@ -15,6 +15,11 @@ class WeeblyClient
 	public $site_id;
 
 	/**
+	 * Weebly User's API Access token
+	 */
+	private $access_token;
+
+	/**
 	 * Application Client Id
 	 */
 	private $client_id;
@@ -23,6 +28,7 @@ class WeeblyClient
 	 * Application Client Secret
 	 */
 	private $client_secret;
+
 
 	/**
 	 * Creates a new API interaction object.
@@ -40,6 +46,7 @@ class WeeblyClient
 		$this->client_secret = $client_secret;
 		$this->user_id = $user_id;
 		$this->site_id = $site_id;
+		$this->access_token = $access_token;
 	}
 
 	/**
