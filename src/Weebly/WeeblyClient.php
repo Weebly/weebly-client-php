@@ -1,4 +1,11 @@
 <?php
+/**
+ * WeeblyClient for using Weebly as an OAuth provider, and talking to Weebly APIs
+ *
+ * @package Weebly
+ * @author Bryan Ashley <bryan@weebly.com>
+ * @since 2015-03-30
+ */
 
 namespace Weebly;
 
@@ -11,28 +18,57 @@ class WeeblyClient
 
 	/**
 	 * Weebly User Id
+	 *
+	 * @var $user_id
 	 */
 	public $user_id;
 
 	/**
 	 * Weebly Site Id
+	 *
+	 * @var $site_id
 	 */
 	public $site_id;
 
 	/**
 	 * Weebly User's API Access token
+	 *
+	 * @var $access_token
 	 */
 	private $access_token;
 
 	/**
 	 * Application Client Id
+	 *
+	 * @var $client_id
 	 */
 	private $client_id;
 
 	/**
 	 * Application Client Secret
+	 *
+	 * @var $client_secret
 	 */
 	private $client_secret;
+
+	/**
+	 * Default Curl Options
+	 *
+	 * @var $default_curl_options
+	 */
+	private $default_curl_options = array(
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_CONNECTTIMEOUT => 30,
+		CURLOPT_TIMEOUT => 30,
+		CURLOPT_USERAGENT => 'weebly/weebly_client'
+	);
+
+	/**
+	 * Cached Curl Handler
+	 *
+	 * @var $curl_handler
+	 */
+	private $curl_handler;
 
 
 	/**
@@ -99,6 +135,73 @@ class WeeblyClient
 	 */
 	public function getAccessToken($authorization_code)
 	{
+		$url = self::WEEBLY_API_DOMAIN.'/marketplace/oauth/access_token';
+		$result = $this->makeRequest($url, $this->prepareAccessTokenParams($authorization_code));
+		return $result->access_token;
+	}
 
+	/**
+	 * Returns an array of the parameters required for retrieving a weebly access token for a user
+	 *
+	 * @param string $authorization_code
+	 * @return array $params
+	 */
+	private function prepareAccessTokenParams($authorization_code)
+	{
+		$params = array(
+			'client_id' => $this->client_id,
+			'client_secret' => $this->client_secret,
+			'authorization_code' => $authorization_code,
+			'user_id' => $this->user_id
+		);
+		return $params;
+	}
+
+	/**
+	 * Internal fucntion used for making curl requests to api
+	 *
+	 * @param string $url                    URL to make request to
+	 * @param (optional) array $paramenters  Array of parameters to pass
+	 * @param (optional) string $method      HTTP method, defaults to 'POST'
+	 *
+	 * @return array $response
+	 */
+	private function makeRequest($url, $parameters=array(), $method='POST')
+	{
+		$curl_handler = $this->getCurlHandler();
+
+		if ($method === 'POST') {
+			$options = array(
+				CURLOPT_POSTFIELDS => http_build_query($parameters),
+				CURLOPT_POST => $method === 'POST'
+			);
+		}
+
+		if ($this->access_token) {
+			$header = array();
+			$header[] = 'Content-type: application/json';
+			$header[] = 'Authorization: X-Weebly-Access-Token: '.$this->access_token;
+			$options[CURLOPT_HTTPHEADER] = $header;
+		}
+
+		$options[CURLOPT_URL] = $url;
+		
+		curl_setopt_array($curl_handler, $this->default_curl_options + $options);
+		$result = curl_exec($curl_handler);
+		return json_decode($result);
+	}
+
+	/**
+	 * Retrieves the running instance of a curl handler if one exists; otherwise creates one.
+	 *
+	 * @return resource $this->curl_handler
+	 */
+	private function getCurlHandler()
+	{
+		if (isset($this->curl_handler) === false) {
+			$this->curl_handler = curl_init();
+		}
+
+		return $this->curl_handler;
 	}
 }
