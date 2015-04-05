@@ -76,14 +76,14 @@ class WeeblyClient
      *
      * @param string $client_id                Your application client_id
      * @param string $client_secret            Your application client_secret
-     * @param int $user_id                     The Weebly User Id
+     * @param (optional) int $user_id          The Weebly User Id
      * @param (optional) int $site_id          The Weebly Site Id
      * @param (optional) string $access_token  The Weebly User's API access token used for accessing
      *                                         data from already permitted users
      *
      * @return instance
      */
-    public function __construct($client_id, $client_secret, $user_id, $site_id=null, $access_token=null)
+    public function __construct($client_id, $client_secret, $user_id=null, $site_id=null, $access_token=null)
     {
         $this->client_id = $client_id;
         $this->client_secret = $client_secret;
@@ -123,7 +123,7 @@ class WeeblyClient
 
         return $authorization_url.$parameters;
     }
-
+f
     /**
      * Exchanges a temporary authorization code for a permanent access_token
      *
@@ -151,8 +151,7 @@ class WeeblyClient
         $params = array(
             'client_id' => $this->client_id,
             'client_secret' => $this->client_secret,
-            'authorization_code' => $authorization_code,
-            'user_id' => $this->user_id
+            'authorization_code' => $authorization_code
         );
         return $params;
     }
