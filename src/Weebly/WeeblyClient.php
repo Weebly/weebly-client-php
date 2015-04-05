@@ -123,7 +123,7 @@ class WeeblyClient
 
         return $authorization_url.$parameters;
     }
-f
+
     /**
      * Exchanges a temporary authorization code for a permanent access_token
      *
