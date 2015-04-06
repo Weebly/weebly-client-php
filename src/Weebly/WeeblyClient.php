@@ -14,7 +14,7 @@ class WeeblyClient
     /**
      * Weebly API domain
      */
-    const WEEBLY_API_DOMAIN = 'http://bryanashley.dev.weebly.net';
+    const WEEBLY_API_DOMAIN = 'http://oauth.beta.weebly.com';
 
     /**
      * Weebly User Id
