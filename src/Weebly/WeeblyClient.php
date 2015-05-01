@@ -12,9 +12,14 @@ namespace Weebly;
 class WeeblyClient 
 {
     /**
+     * Weebly domain
+     */
+    const WEEBLY_DOMAIN = 'http://marketplace.beta.weebly.com';
+
+    /**
      * Weebly API domain
      */
-    const WEEBLY_API_DOMAIN = 'http://oauth.beta.weebly.com';
+    const WEEBLY_API_DOMAIN = 'http://api.marketplace.beta.weebly.com/v1';
 
     /**
      * Weebly User Id
@@ -105,7 +110,7 @@ class WeeblyClient
      */
     public function getAuthorizationUrl($scope=array(), $redirect_uri=null)
     {
-        $authorization_url = self::WEEBLY_API_DOMAIN.'/marketplace/oauth/authorize';
+        $authorization_url = self::WEEBLY_DOMAIN.'/marketplace/oauth/authorize';
         $parameters = '?client_id='.$this->client_id.'&user_id='.$this->user_id;
 
         if (isset($this->site_id) === true) {
@@ -125,6 +130,30 @@ class WeeblyClient
     }
 
     /**
+     * Makes authenticated API GET Request using provided URL, and parameters
+     *
+     * @param string $url
+     * @param array $parameters
+     * @return json $result
+     */
+    public function get($url, $parameters=[])
+    {
+        return $this->makeRequest(self::WEEBLY_API_DOMAIN.$url, $parameters, 'GET');
+    }
+
+    /**
+     * Makes authenticated API GET Request using provided URL, and parameters
+     *
+     * @param string $url
+     * @param array $parameters
+     * @return json $result
+     */
+    public function post($url, $parameters=[])
+    {
+        return $this->makeRequest(self::WEEBLY_API_DOMAIN.$url, $parameters, 'POST');
+    }
+
+    /**
      * Exchanges a temporary authorization code for a permanent access_token
      *
      * @param string $authorization_code   The authorization_code sent from weebly after the user has 
@@ -135,7 +164,7 @@ class WeeblyClient
      */
     public function getAccessToken($authorization_code)
     {
-        $url = self::WEEBLY_API_DOMAIN.'/marketplace/oauth/access_token';
+        $url = self::WEEBLY_DOMAIN.'/marketplace/oauth/access_token';
         $result = $this->makeRequest($url, $this->prepareAccessTokenParams($authorization_code));
         return $result->access_token;
     }
@@ -171,7 +200,7 @@ class WeeblyClient
 
         if ($method === 'POST') {
             $options = array(
-                CURLOPT_POSTFIELDS => http_build_query($parameters),
+                CURLOPT_POSTFIELDS => json_encode($parameters),
                 CURLOPT_POST => $method === 'POST'
             );
         }
@@ -179,12 +208,11 @@ class WeeblyClient
         if ($this->access_token) {
             $header = array();
             $header[] = 'Content-type: application/json';
-            $header[] = 'Authorization: X-Weebly-Access-Token: '.$this->access_token;
+            $header[] = 'X-Weebly-Access-Token: '.$this->access_token;
             $options[CURLOPT_HTTPHEADER] = $header;
         }
 
         $options[CURLOPT_URL] = $url;
-        
         curl_setopt_array($curl_handler, $this->default_curl_options + $options);
         $result = curl_exec($curl_handler);
         return json_decode($result);
