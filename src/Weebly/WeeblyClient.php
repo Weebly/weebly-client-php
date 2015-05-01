@@ -142,7 +142,7 @@ class WeeblyClient
     }
 
     /**
-     * Makes authenticated API GET Request using provided URL, and parameters
+     * Makes authenticated API POST Request using provided URL, and parameters
      *
      * @param string $url
      * @param array $parameters
@@ -151,6 +151,30 @@ class WeeblyClient
     public function post($url, $parameters=[])
     {
         return $this->makeRequest(self::WEEBLY_API_DOMAIN.$url, $parameters, 'POST');
+    }
+
+    /**
+     * Makes authenticated API PATCH Request using provided URL, and parameters
+     *
+     * @param string $url
+     * @param array $parameters
+     * @return json $result
+     */
+    public function patch($url, $parameters=[])
+    {
+        return $this->makeRequest(self::WEEBLY_API_DOMAIN.$url, $parameters, 'PATCH');
+    }
+
+    /**
+     * Makes authenticated API PUT Request using provided URL, and parameters
+     *
+     * @param string $url
+     * @param array $parameters
+     * @return json $result
+     */
+    public function put($url, $parameters=[])
+    {
+        return $this->makeRequest(self::WEEBLY_API_DOMAIN.$url, $parameters, 'PUT');
     }
 
     /**
@@ -202,6 +226,11 @@ class WeeblyClient
             $options = array(
                 CURLOPT_POSTFIELDS => json_encode($parameters),
                 CURLOPT_POST => $method === 'POST'
+            );
+        } else if ($method !== 'GET'){
+            $options = array(
+                CURLOPT_CUSTOMREQUEST, $method,
+                CURLOPT_POSTFIELDS => json_encode($parameters)
             );
         }
 
