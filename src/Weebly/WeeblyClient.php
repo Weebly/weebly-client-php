@@ -19,7 +19,7 @@ class WeeblyClient
     /**
      * Weebly API domain
      */
-    const WEEBLY_API_DOMAIN = 'http://api.marketplace.beta.weebly.com/v1';
+    const WEEBLY_API_DOMAIN = 'https://api-marketplace.beta.weebly.com/v1';
 
     /**
      * Weebly User Id
