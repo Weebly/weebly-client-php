@@ -110,7 +110,7 @@ class WeeblyClient
      */
     public function getAuthorizationUrl($scope=array(), $redirect_uri=null)
     {
-        $authorization_url = self::WEEBLY_DOMAIN.'/marketplace/oauth/authorize';
+        $authorization_url = self::WEEBLY_DOMAIN.'/app-center/oauth/authorize';
         $parameters = '?client_id='.$this->client_id.'&user_id='.$this->user_id;
 
         if (isset($this->site_id) === true) {
@@ -188,7 +188,7 @@ class WeeblyClient
      */
     public function getAccessToken($authorization_code)
     {
-        $url = self::WEEBLY_DOMAIN.'/marketplace/oauth/access_token';
+        $url = self::WEEBLY_DOMAIN.'/app-center/oauth/access_token';
         $result = $this->makeRequest($url, $this->prepareAccessTokenParams($authorization_code));
         return $result->access_token;
     }
