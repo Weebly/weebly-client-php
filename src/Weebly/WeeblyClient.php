@@ -14,12 +14,12 @@ class WeeblyClient
     /**
      * Weebly domain
      */
-    const WEEBLY_DOMAIN = 'http://marketplace.beta.weebly.com';
+    const WEEBLY_DOMAIN = 'https://marketplace.beta.weebly.com';
 
     /**
      * Weebly API domain
      */
-    const WEEBLY_API_DOMAIN = 'https://api-marketplace.beta.weebly.com/v1';
+    const WEEBLY_API_DOMAIN = 'https://api.weebly.com/v1';
 
     /**
      * Weebly User Id
