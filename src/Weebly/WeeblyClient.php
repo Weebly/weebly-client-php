@@ -14,12 +14,12 @@ class WeeblyClient
     /**
      * Weebly domain
      */
-    const WEEBLY_DOMAIN = 'http://marketplace.beta.weebly.com';
+    const WEEBLY_DOMAIN = 'https://www.weebly.com';
 
     /**
      * Weebly API domain
      */
-    const WEEBLY_API_DOMAIN = 'http://api.marketplace.beta.weebly.com/v1';
+    const WEEBLY_API_DOMAIN = 'https://api.weebly.com/v1';
 
     /**
      * Weebly User Id
@@ -104,13 +104,20 @@ class WeeblyClient
      *                                          requesting i.e (read:user, read:commerce)
      * @param (optional) string $redirect_uri   The url weebly will redirect to upon user's grant of 
      *                                          permissions. Defaults to application callback url
+     * @param (optional) string $callback_url   The url provided by weebly to initiate the authorize
+     *                                          step of the oauth process
      *
      *
      * @return string $authorization_url
      */
-    public function getAuthorizationUrl($scope=array(), $redirect_uri=null)
+    public function getAuthorizationUrl($scope=array(), $redirect_uri=null, $callback_url=null)
     {
-        $authorization_url = self::WEEBLY_DOMAIN.'/marketplace/oauth/authorize';
+        if (isset($callback_url) === true) {
+            $authorization_url = $callback_url;
+        } else {
+            $authorization_url = self::WEEBLY_DOMAIN.'/app-center/oauth/authorize';
+        }
+
         $parameters = '?client_id='.$this->client_id.'&user_id='.$this->user_id;
 
         if (isset($this->site_id) === true) {
@@ -180,15 +187,21 @@ class WeeblyClient
     /**
      * Exchanges a temporary authorization code for a permanent access_token
      *
-     * @param string $authorization_code   The authorization_code sent from weebly after the user has 
-     *                                     granted the application access to their data.
+     * @param string $authorization_code        The authorization_code sent from weebly after the user has
+     *                                          granted the application access to their data.
+     * @param (optional) string $callback_url   The url provided by weebly to retrieve the access token
      *
      *
      * @return string $access_token
      */
-    public function getAccessToken($authorization_code)
+    public function getAccessToken($authorization_code, $callback_url=null)
     {
-        $url = self::WEEBLY_DOMAIN.'/marketplace/oauth/access_token';
+        if (isset($callback_url) === true) {
+            $url = $callback_url;
+        } else {
+            $url = self::WEEBLY_DOMAIN.'/app-center/oauth/access_token';
+        }
+
         $result = $this->makeRequest($url, $this->prepareAccessTokenParams($authorization_code));
         return $result->access_token;
     }
