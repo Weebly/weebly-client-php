@@ -14,7 +14,7 @@ class WeeblyClient
     /**
      * Weebly domain
      */
-    const WEEBLY_DOMAIN = 'https://marketplace.beta.weebly.com';
+    const WEEBLY_DOMAIN = 'https://weebly.com';
 
     /**
      * Weebly API domain
