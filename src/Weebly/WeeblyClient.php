@@ -242,7 +242,7 @@ class WeeblyClient
             );
         } else if ($method !== 'GET'){
             $options = array(
-                CURLOPT_CUSTOMREQUEST, $method,
+                CURLOPT_CUSTOMREQUEST => $method,
                 CURLOPT_POSTFIELDS => json_encode($parameters)
             );
         }
