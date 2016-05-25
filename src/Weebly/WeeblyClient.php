@@ -161,6 +161,18 @@ class WeeblyClient
     }
 
     /**
+     * Makes authenticated API DELETE Request using provided URL, and parameters
+     *
+     * @param string $url
+     * @param array $parameters
+     * @return json $result
+     */
+    public function delete($url, $parameters=[])
+    {
+        return $this->makeRequest(self::WEEBLY_API_DOMAIN.$url, $parameters, 'DELETE');
+    }
+
+    /**
      * Makes authenticated API PATCH Request using provided URL, and parameters
      *
      * @param string $url
@@ -235,14 +247,9 @@ class WeeblyClient
     {
         $curl_handler = $this->getCurlHandler();
 
-        if ($method === 'POST') {
+        if ($method !== 'GET'){
             $options = array(
-                CURLOPT_POSTFIELDS => json_encode($parameters),
-                CURLOPT_POST => $method === 'POST'
-            );
-        } else if ($method !== 'GET'){
-            $options = array(
-                CURLOPT_CUSTOMREQUEST, $method,
+                CURLOPT_CUSTOMREQUEST => $method,
                 CURLOPT_POSTFIELDS => json_encode($parameters)
             );
         }
