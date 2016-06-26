@@ -235,7 +235,7 @@ class WeeblyClient
     }
 
     /**
-     * Internal fucntion used for making curl requests to api
+     * Internal function used for making curl requests to api
      *
      * @param string $url                    URL to make request to
      * @param (optional) array $paramenters  Array of parameters to pass
@@ -247,7 +247,10 @@ class WeeblyClient
     {
         $curl_handler = $this->getCurlHandler();
 
-        if ($method !== 'GET'){
+        if ($method === 'GET'){
+            // The HTTP method may have been set to POST. Reset the POST options on the handler to default to GET.
+            curl_reset($curl_handler);
+        } else {
             $options = array(
                 CURLOPT_CUSTOMREQUEST => $method,
                 CURLOPT_POSTFIELDS => json_encode($parameters)
