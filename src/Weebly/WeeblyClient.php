@@ -250,6 +250,7 @@ class WeeblyClient
         if ($method === 'GET'){
             // The HTTP method may have been set to POST. Reset the POST options on the handler to default to GET.
             curl_reset($curl_handler);
+            $options = [];
         } else {
             $options = array(
                 CURLOPT_CUSTOMREQUEST => $method,
