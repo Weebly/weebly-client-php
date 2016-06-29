@@ -1,7 +1,9 @@
 # Weebly Client
 
 Weebly Client is a basic PHP class that simplifies interactions with the Weebly REST API.
+
 You can find more details about how to get set-up with your Weebly project at <https://dev.weebly.com/get-started-with-developing-apps.html>.
+
 You can find details about the various endpoints that you may access with the Weebly Client at <https://dev.weebly.com/about-rest-apis.html>.
 
 ## Usage:
@@ -23,27 +25,29 @@ You can find more information about the OAuth flow and how to obtain the `$user_
 The WeeblyClient provides a few helper methods to aid you through the OAuth flow.
     * `getAuthorizationUrl` Returns a properly formatted authorization URL that you should respond with after our servers initiate the OAuth flow.
     * `getAccessToken` :Retrieves the access token once you have obtained the necessary authorization code in OAuth.
-    You can find more information about the Weebly OAuth flow at <https://dev.weebly.com/configure-oauth.html>.
+
+You can find more information about the Weebly OAuth flow at <https://dev.weebly.com/configure-oauth.html>.
 
 ### Making API Calls
 We have provided simplified functions to make requests with the GET, POST, DELETE, PATCH and PUT methods.
 
-Examples:
+#### Examples:
 Get Site Details:
 
 ```
 $endpoint = '/user/sites/' . $site_id;
-$site_data = $client.get($endpoint);
+$response = $client.get($endpoint);
 ```
 
-Create a new product:
+Mark a product as shipped:
 ```
-$endpoint = '/user/sites/'. $site_id . '/store/products'
-$product = [];
+$endpoint = '/user/sites/' . $site_id . '/store/orders/' . $order_id . '/shipments/' . $order_shipment_id;
+$product = ["tracking_number"=> "1234567810abcde"]; //Modifying the tracking_number on an unshipped product will mark it as shipped as well!
+$response = $client.put($endpoint, $product);
 ```
 
 You can find details about the various endpoints that you may access with the Weebly Client at <https://dev.weebly.com/about-rest-apis.html>.
 
 ### Questions?
-If you have any questions or feature requests for the Weebly Client, please open up a new issue ticket.
-For general API questions, please send an email to dev-support@weebly.com
+If you have any questions or feature requests pertaining to the Weebly Client, please open up a new issue.
+For general API questions, please contact us at dev-support@weebly.com, and we'll be happy to lend a hand!
