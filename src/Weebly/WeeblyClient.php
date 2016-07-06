@@ -143,9 +143,9 @@ class WeeblyClient
      * @param array $parameters
      * @return json $result
      */
-    public function get($url, $parameters=[])
+    public function get($url)
     {
-        return $this->makeRequest(self::WEEBLY_API_DOMAIN.$url, $parameters, 'GET');
+        return $this->makeRequest(self::WEEBLY_API_DOMAIN . $url, [], 'GET');
     }
 
     /**
@@ -235,7 +235,7 @@ class WeeblyClient
     }
 
     /**
-     * Internal fucntion used for making curl requests to api
+     * Internal function used for making curl requests to api
      *
      * @param string $url                    URL to make request to
      * @param (optional) array $paramenters  Array of parameters to pass
@@ -243,11 +243,15 @@ class WeeblyClient
      *
      * @return array $response
      */
-    private function makeRequest($url, $parameters=array(), $method='POST')
+    private function makeRequest($url, $parameters = array(), $method = 'POST')
     {
         $curl_handler = $this->getCurlHandler();
 
-        if ($method !== 'GET'){
+        if ($method === 'GET') {
+            // The HTTP method may have been set to POST. Reset the POST options on the handler to default to GET.
+            curl_reset($curl_handler);
+            $options = [];
+        } else {
             $options = array(
                 CURLOPT_CUSTOMREQUEST => $method,
                 CURLOPT_POSTFIELDS => json_encode($parameters)
@@ -257,7 +261,7 @@ class WeeblyClient
         if ($this->access_token) {
             $header = array();
             $header[] = 'Content-type: application/json';
-            $header[] = 'X-Weebly-Access-Token: '.$this->access_token;
+            $header[] = 'X-Weebly-Access-Token: ' . $this->access_token;
             $options[CURLOPT_HTTPHEADER] = $header;
         }
 
