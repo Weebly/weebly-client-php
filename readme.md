@@ -44,7 +44,7 @@ $response = $client.get($endpoint);
 Mark a product as shipped:
 ```php
 $endpoint = '/user/sites/' . $site_id . '/store/orders/' . $order_id . '/shipments/' . $order_shipment_id;
-$product = ["tracking_number"=> "1234567810abcde"]; //Modifying the tracking_number on an unshipped product will mark it as shipped as well!
+$product = ['tracking_number' => '1234567810abcde']; //Modifying the tracking_number on an unshipped product will mark it as shipped as well!
 $response = $client.put($endpoint, $product);
 ```
 
