@@ -98,7 +98,8 @@ class WeeblyClient
     }
 
     /**
-     * Returns the url to redirect to for oauth authentication (Step 1 in OAuth flow)
+     * Returns the url to redirect to for oauth authentication (Step 1 for you in the OAuth flow)
+     * This method requires that you provide both the user_id and site_id when constructing the client object.
      *
      * @param (optional) array $scope           An array of the permissions your application is 
      *                                          requesting i.e (read:user, read:commerce)
