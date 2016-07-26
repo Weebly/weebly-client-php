@@ -13,7 +13,7 @@ You can find details about the various endpoints that you may access with the We
 You may insantiate a new Weebly Client as such:
 
 ```php
-$client = \Weebly\WeeblyClient($client_id, $client_secret, $user_id, $site_id, $access_token);
+$client = new \Weebly\WeeblyClient($client_id, $client_secret, $user_id, $site_id, $access_token);
 ```
 
 The only mandatory options that you must provide to the constructor are `$client_id` and `$client_secret`. You can find them both in your dev dashboard at <https://www.weebly.com/developer-admin> once you have registered a developer account with Weebly.
@@ -38,14 +38,14 @@ Get Site Details:
 
 ```php
 $endpoint = '/user/sites/' . $site_id;
-$response = $client.get($endpoint);
+$response = $client->get($endpoint);
 ```
 
 Mark a product as shipped:
 ```php
 $endpoint = '/user/sites/' . $site_id . '/store/orders/' . $order_id . '/shipments/' . $order_shipment_id;
 $product = ['tracking_number' => '1234567810abcde']; //Modifying the tracking_number on an unshipped product will mark it as shipped as well!
-$response = $client.put($endpoint, $product);
+$response = $client->put($endpoint, $product);
 ```
 
 You can find details about the various endpoints that you may access with the Weebly Client at <https://dev.weebly.com/about-rest-apis.html>.
