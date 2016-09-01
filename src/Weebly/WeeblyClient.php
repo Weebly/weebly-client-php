@@ -259,8 +259,8 @@ class WeeblyClient
             );
         }
 
-        $header[] = 'Content-type: application/json';
         $header = array();
+        $header[] = 'Content-type: application/json';
         if ($this->access_token) {
             $header[] = 'X-Weebly-Access-Token: ' . $this->access_token;
         } else {
