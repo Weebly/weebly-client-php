@@ -9,7 +9,7 @@
 
 namespace Weebly;
 
-class WeeblyClient 
+class WeeblyClient
 {
     /**
      * Weebly domain
@@ -101,9 +101,9 @@ class WeeblyClient
      * Returns the url to redirect to for oauth authentication (Step 1 for you in the OAuth flow)
      * This method requires that you provide both the user_id and site_id when constructing the client object.
      *
-     * @param (optional) array $scope           An array of the permissions your application is 
+     * @param (optional) array $scope           An array of the permissions your application is
      *                                          requesting i.e (read:user, read:commerce)
-     * @param (optional) string $redirect_uri   The url weebly will redirect to upon user's grant of 
+     * @param (optional) string $redirect_uri   The url weebly will redirect to upon user's grant of
      *                                          permissions. Defaults to application callback url
      * @param (optional) string $callback_url   The url provided by weebly to initiate the authorize
      *                                          step of the oauth process
@@ -259,12 +259,15 @@ class WeeblyClient
             );
         }
 
+        $header[] = 'Content-type: application/json';
+        $header = array();
         if ($this->access_token) {
-            $header = array();
-            $header[] = 'Content-type: application/json';
             $header[] = 'X-Weebly-Access-Token: ' . $this->access_token;
-            $options[CURLOPT_HTTPHEADER] = $header;
+        } else {
+            $header[] = 'X-Weebly-Client-ID: ' . $this->client_id;
+            $header[] = 'X-Weebly-Client-Secret: ' . $this->client_secret;
         }
+        $options[CURLOPT_HTTPHEADER] = $header;
 
         $options[CURLOPT_URL] = $url;
         curl_setopt_array($curl_handler, $this->default_curl_options + $options);
