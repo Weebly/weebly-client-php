@@ -11,281 +11,295 @@ namespace Weebly;
 
 class WeeblyClient
 {
-    /**
-     * Weebly domain
-     */
-    const WEEBLY_DOMAIN = 'https://www.weebly.com';
+	/**
+	 * Weebly domain
+	 */
+	const WEEBLY_DOMAIN = 'https://www.weebly.com';
 
-    /**
-     * Weebly API domain
-     */
-    const WEEBLY_API_DOMAIN = 'https://api.weebly.com/v1';
+	/**
+	 * Weebly API domain
+	 */
+	const WEEBLY_API_DOMAIN = 'https://api.weebly.com/v1';
 
-    /**
-     * Weebly User Id
-     *
-     * @var $user_id
-     */
-    public $user_id;
+	/**
+	 * Weebly User Id
+	 *
+	 * @var $user_id
+	 */
+	public $user_id;
 
-    /**
-     * Weebly Site Id
-     *
-     * @var $site_id
-     */
-    public $site_id;
+	/**
+	 * Weebly Site Id
+	 *
+	 * @var $site_id
+	 */
+	public $site_id;
 
-    /**
-     * Weebly User's API Access token
-     *
-     * @var $access_token
-     */
-    private $access_token;
+	/**
+	 * Weebly User's API Access token
+	 *
+	 * @var $access_token
+	 */
+	private $access_token;
 
-    /**
-     * Application Client Id
-     *
-     * @var $client_id
-     */
-    private $client_id;
+	/**
+	 * Application Client Id
+	 *
+	 * @var $client_id
+	 */
+	private $client_id;
 
-    /**
-     * Application Client Secret
-     *
-     * @var $client_secret
-     */
-    private $client_secret;
+	/**
+	 * Application Client Secret
+	 *
+	 * @var $client_secret
+	 */
+	private $client_secret;
 
-    /**
-     * Default Curl Options
-     *
-     * @var $default_curl_options
-     */
-    private $default_curl_options = array(
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_CONNECTTIMEOUT => 30,
-        CURLOPT_TIMEOUT => 30,
-        CURLOPT_USERAGENT => 'weebly/weebly_client'
-    );
+	/**
+	 * Default Curl Options
+	 *
+	 * @var $default_curl_options
+	 */
+	private $default_curl_options = array(
+		CURLOPT_RETURNTRANSFER => true,
+		CURLOPT_CONNECTTIMEOUT => 30,
+		CURLOPT_TIMEOUT => 30,
+		CURLOPT_USERAGENT => 'weebly/weebly_client'
+	);
 
-    /**
-     * Cached Curl Handler
-     *
-     * @var $curl_handler
-     */
-    private $curl_handler;
+	/**
+	 * Cached Curl Handler
+	 *
+	 * @var $curl_handler
+	 */
+	private $curl_handler;
 
 
-    /**
-     * Creates a new API interaction object.
-     *
-     * @param string $client_id                Your application client_id
-     * @param string $client_secret            Your application client_secret
-     * @param (optional) int $user_id          The Weebly User Id
-     * @param (optional) int $site_id          The Weebly Site Id
-     * @param (optional) string $access_token  The Weebly User's API access token used for accessing
-     *                                         data from already permitted users
-     *
-     * @return instance
-     */
-    public function __construct($client_id, $client_secret, $user_id=null, $site_id=null, $access_token=null)
-    {
-        $this->client_id = $client_id;
-        $this->client_secret = $client_secret;
-        $this->user_id = $user_id;
-        $this->site_id = $site_id;
-        $this->access_token = $access_token;
-    }
+	/**
+	 * Creates a new API interaction object.
+	 *
+	 * @param string $client_id                Your application client_id
+	 * @param string $client_secret            Your application client_secret
+	 * @param (optional) int $user_id          The Weebly User Id
+	 * @param (optional) int $site_id          The Weebly Site Id
+	 * @param (optional) string $access_token  The Weebly User's API access token used for accessing
+	 *                                         data from already permitted users
+	 *
+	 * @return instance
+	 */
+	public function __construct($client_id, $client_secret, $user_id=null, $site_id=null, $access_token=null)
+	{
+		$this->client_id = $client_id;
+		$this->client_secret = $client_secret;
+		$this->user_id = $user_id;
+		$this->site_id = $site_id;
+		$this->access_token = $access_token;
+	}
 
-    /**
-     * Returns the url to redirect to for oauth authentication (Step 1 for you in the OAuth flow)
-     * This method requires that you provide both the user_id and site_id when constructing the client object.
-     *
-     * @param (optional) array $scope           An array of the permissions your application is
-     *                                          requesting i.e (read:user, read:commerce)
-     * @param (optional) string $redirect_uri   The url weebly will redirect to upon user's grant of
-     *                                          permissions. Defaults to application callback url
-     * @param (optional) string $callback_url   The url provided by weebly to initiate the authorize
-     *                                          step of the oauth process
-     *
-     *
-     * @return string $authorization_url
-     */
-    public function getAuthorizationUrl($scope=array(), $redirect_uri=null, $callback_url=null)
-    {
-        if (isset($callback_url) === true) {
-            $authorization_url = $callback_url;
-        } else {
-            $authorization_url = self::WEEBLY_DOMAIN.'/app-center/oauth/authorize';
-        }
+	public static function getWeeblyDomain(){
+		if(defined('WEEBLY_DOMAIN')) {
+			return WEEBLY_DOMAIN;
+		}
+		return self::WEEBLY_DOMAIN;
+	}
 
-        $parameters = '?client_id='.$this->client_id.'&user_id='.$this->user_id;
+	public static function getWeeblyAPIDomain(){
+		if(defined('WEEBLY_API_DOMAIN')) {
+			return WEEBLY_API_DOMAIN;
+		}
+		return self::WEEBLY_API_DOMAIN;
+	}
 
-        if (isset($this->site_id) === true) {
-            $parameters .= '&site_id='.$this->site_id;
-        }
+	/**
+	 * Returns the url to redirect to for oauth authentication (Step 1 for you in the OAuth flow)
+	 * This method requires that you provide both the user_id and site_id when constructing the client object.
+	 *
+	 * @param (optional) array $scope           An array of the permissions your application is
+	 *                                          requesting i.e (read:user, read:commerce)
+	 * @param (optional) string $redirect_uri   The url weebly will redirect to upon user's grant of
+	 *                                          permissions. Defaults to application callback url
+	 * @param (optional) string $callback_url   The url provided by weebly to initiate the authorize
+	 *                                          step of the oauth process
+	 *
+	 *
+	 * @return string $authorization_url
+	 */
+	public function getAuthorizationUrl($scope=array(), $redirect_uri=null, $callback_url=null)
+	{
+		if (isset($callback_url) === true) {
+			$authorization_url = $callback_url;
+		} else {
+			$authorization_url = self::getWeeblyDomain().'/app-center/oauth/authorize';
+		}
 
-        if (isset($redirect_uri) === true) {
-            $parameters .= '&redirect_uri='.$redirect_uri;
-        }
+		$parameters = '?client_id='.$this->client_id.'&user_id='.$this->user_id;
 
-        if (is_array($scope) === true) {
-            $scope_parameters = implode(',', $scope);
-            $parameters .= '&scope='.$scope_parameters;
-        }
+		if (isset($this->site_id) === true) {
+			$parameters .= '&site_id='.$this->site_id;
+		}
 
-        return $authorization_url.$parameters;
-    }
+		if (isset($redirect_uri) === true) {
+			$parameters .= '&redirect_uri='.$redirect_uri;
+		}
 
-    /**
-     * Makes authenticated API GET Request using provided URL, and parameters
-     *
-     * @param string $url
-     * @param array $parameters
-     * @return json $result
-     */
-    public function get($url)
-    {
-        return $this->makeRequest(self::WEEBLY_API_DOMAIN . $url, [], 'GET');
-    }
+		if (is_array($scope) === true) {
+			$scope_parameters = implode(',', $scope);
+			$parameters .= '&scope='.$scope_parameters;
+		}
 
-    /**
-     * Makes authenticated API POST Request using provided URL, and parameters
-     *
-     * @param string $url
-     * @param array $parameters
-     * @return json $result
-     */
-    public function post($url, $parameters=[])
-    {
-        return $this->makeRequest(self::WEEBLY_API_DOMAIN.$url, $parameters, 'POST');
-    }
+		return $authorization_url.$parameters;
+	}
 
-    /**
-     * Makes authenticated API DELETE Request using provided URL, and parameters
-     *
-     * @param string $url
-     * @param array $parameters
-     * @return json $result
-     */
-    public function delete($url, $parameters=[])
-    {
-        return $this->makeRequest(self::WEEBLY_API_DOMAIN.$url, $parameters, 'DELETE');
-    }
+	/**
+	 * Makes authenticated API GET Request using provided URL, and parameters
+	 *
+	 * @param string $url
+	 * @param array $parameters
+	 * @return json $result
+	 */
+	public function get($url)
+	{
+		return $this->makeRequest(self::getWeeblyAPIDomain() . $url, [], 'GET');
+	}
 
-    /**
-     * Makes authenticated API PATCH Request using provided URL, and parameters
-     *
-     * @param string $url
-     * @param array $parameters
-     * @return json $result
-     */
-    public function patch($url, $parameters=[])
-    {
-        return $this->makeRequest(self::WEEBLY_API_DOMAIN.$url, $parameters, 'PATCH');
-    }
+	/**
+	 * Makes authenticated API POST Request using provided URL, and parameters
+	 *
+	 * @param string $url
+	 * @param array $parameters
+	 * @return json $result
+	 */
+	public function post($url, $parameters=[])
+	{
+		return $this->makeRequest(self::getWeeblyAPIDomain().$url, $parameters, 'POST');
+	}
 
-    /**
-     * Makes authenticated API PUT Request using provided URL, and parameters
-     *
-     * @param string $url
-     * @param array $parameters
-     * @return json $result
-     */
-    public function put($url, $parameters=[])
-    {
-        return $this->makeRequest(self::WEEBLY_API_DOMAIN.$url, $parameters, 'PUT');
-    }
+	/**
+	 * Makes authenticated API DELETE Request using provided URL, and parameters
+	 *
+	 * @param string $url
+	 * @param array $parameters
+	 * @return json $result
+	 */
+	public function delete($url, $parameters=[])
+	{
+		return $this->makeRequest(self::getWeeblyAPIDomain().$url, $parameters, 'DELETE');
+	}
 
-    /**
-     * Exchanges a temporary authorization code for a permanent access_token
-     *
-     * @param string $authorization_code        The authorization_code sent from weebly after the user has
-     *                                          granted the application access to their data.
-     * @param (optional) string $callback_url   The url provided by weebly to retrieve the access token
-     *
-     *
-     * @return string $access_token
-     */
-    public function getAccessToken($authorization_code, $callback_url=null)
-    {
-        if (isset($callback_url) === true) {
-            $url = $callback_url;
-        } else {
-            $url = self::WEEBLY_DOMAIN.'/app-center/oauth/access_token';
-        }
+	/**
+	 * Makes authenticated API PATCH Request using provided URL, and parameters
+	 *
+	 * @param string $url
+	 * @param array $parameters
+	 * @return json $result
+	 */
+	public function patch($url, $parameters=[])
+	{
+		return $this->makeRequest(self::getWeeblyAPIDomain().$url, $parameters, 'PATCH');
+	}
 
-        $result = $this->makeRequest($url, $this->prepareAccessTokenParams($authorization_code));
-        return $result->access_token;
-    }
+	/**
+	 * Makes authenticated API PUT Request using provided URL, and parameters
+	 *
+	 * @param string $url
+	 * @param array $parameters
+	 * @return json $result
+	 */
+	public function put($url, $parameters=[])
+	{
+		return $this->makeRequest(self::getWeeblyAPIDomain().$url, $parameters, 'PUT');
+	}
 
-    /**
-     * Returns an array of the parameters required for retrieving a weebly access token for a user
-     *
-     * @param string $authorization_code
-     * @return array $params
-     */
-    private function prepareAccessTokenParams($authorization_code)
-    {
-        $params = array(
-            'client_id' => $this->client_id,
-            'client_secret' => $this->client_secret,
-            'authorization_code' => $authorization_code
-        );
-        return $params;
-    }
+	/**
+	 * Exchanges a temporary authorization code for a permanent access_token
+	 *
+	 * @param string $authorization_code        The authorization_code sent from weebly after the user has
+	 *                                          granted the application access to their data.
+	 * @param (optional) string $callback_url   The url provided by weebly to retrieve the access token
+	 *
+	 *
+	 * @return string $access_token
+	 */
+	public function getAccessToken($authorization_code, $callback_url=null)
+	{
+		if (isset($callback_url) === true) {
+			$url = $callback_url;
+		} else {
+			$url = self::getWeeblyDomain().'/app-center/oauth/access_token';
+		}
 
-    /**
-     * Internal function used for making curl requests to api
-     *
-     * @param string $url                    URL to make request to
-     * @param (optional) array $paramenters  Array of parameters to pass
-     * @param (optional) string $method      HTTP method, defaults to 'POST'
-     *
-     * @return array $response
-     */
-    private function makeRequest($url, $parameters = array(), $method = 'POST')
-    {
-        $curl_handler = $this->getCurlHandler();
+		$result = $this->makeRequest($url, $this->prepareAccessTokenParams($authorization_code));
+		return $result->access_token;
+	}
 
-        if ($method === 'GET') {
-            // The HTTP method may have been set to POST. Reset the POST options on the handler to default to GET.
-            curl_reset($curl_handler);
-            $options = [];
-        } else {
-            $options = array(
-                CURLOPT_CUSTOMREQUEST => $method,
-                CURLOPT_POSTFIELDS => json_encode($parameters)
-            );
-        }
+	/**
+	 * Returns an array of the parameters required for retrieving a weebly access token for a user
+	 *
+	 * @param string $authorization_code
+	 * @return array $params
+	 */
+	private function prepareAccessTokenParams($authorization_code)
+	{
+		$params = array(
+			'client_id' => $this->client_id,
+			'client_secret' => $this->client_secret,
+			'authorization_code' => $authorization_code
+		);
+		return $params;
+	}
 
-        $header = array();
-        $header[] = 'Content-type: application/json';
-        if ($this->access_token) {
-            $header[] = 'X-Weebly-Access-Token: ' . $this->access_token;
-        } else {
-            $header[] = 'X-Weebly-Client-ID: ' . $this->client_id;
-            $header[] = 'X-Weebly-Client-Secret: ' . $this->client_secret;
-        }
-        $options[CURLOPT_HTTPHEADER] = $header;
+	/**
+	 * Internal function used for making curl requests to api
+	 *
+	 * @param string $url                    URL to make request to
+	 * @param (optional) array $paramenters  Array of parameters to pass
+	 * @param (optional) string $method      HTTP method, defaults to 'POST'
+	 *
+	 * @return array $response
+	 */
+	private function makeRequest($url, $parameters = array(), $method = 'POST')
+	{
+		$curl_handler = $this->getCurlHandler();
 
-        $options[CURLOPT_URL] = $url;
-        curl_setopt_array($curl_handler, $this->default_curl_options + $options);
-        $result = curl_exec($curl_handler);
-        return json_decode($result);
-    }
+		if ($method === 'GET') {
+			// The HTTP method may have been set to POST. Reset the POST options on the handler to default to GET.
+			curl_reset($curl_handler);
+			$options = [];
+		} else {
+			$options = array(
+				CURLOPT_CUSTOMREQUEST => $method,
+				CURLOPT_POSTFIELDS => json_encode($parameters)
+			);
+		}
 
-    /**
-     * Retrieves the running instance of a curl handler if one exists; otherwise creates one.
-     *
-     * @return resource $this->curl_handler
-     */
-    private function getCurlHandler()
-    {
-        if (isset($this->curl_handler) === false) {
-            $this->curl_handler = curl_init();
-        }
+		$header = array();
+		$header[] = 'Content-type: application/json';
+		if ($this->access_token) {
+			$header[] = 'X-Weebly-Access-Token: ' . $this->access_token;
+		} else {
+			$header[] = 'X-Weebly-Client-ID: ' . $this->client_id;
+			$header[] = 'X-Weebly-Client-Secret: ' . $this->client_secret;
+		}
+		$options[CURLOPT_HTTPHEADER] = $header;
 
-        return $this->curl_handler;
-    }
+		$options[CURLOPT_URL] = $url;
+		curl_setopt_array($curl_handler, $this->default_curl_options + $options);
+		$result = curl_exec($curl_handler);
+		return json_decode($result);
+	}
+
+	/**
+	 * Retrieves the running instance of a curl handler if one exists; otherwise creates one.
+	 *
+	 * @return resource $this->curl_handler
+	 */
+	private function getCurlHandler()
+	{
+		if (isset($this->curl_handler) === false) {
+			$this->curl_handler = curl_init();
+		}
+
+		return $this->curl_handler;
+	}
 }
