@@ -116,7 +116,7 @@ class WeeblyClient
         if (isset($callback_url) === true) {
             $authorization_url = $callback_url;
         } else {
-            $authorization_url = self::WEEBLY_DOMAIN.'/app-center/oauth/authorize';
+            $authorization_url = $this->getWeeblyDomain().'/app-center/oauth/authorize';
         }
 
         $parameters = '?client_id='.$this->client_id.'&user_id='.$this->user_id;
@@ -146,7 +146,7 @@ class WeeblyClient
      */
     public function get($url)
     {
-        return $this->makeRequest(self::WEEBLY_API_DOMAIN . $url, [], 'GET');
+        return $this->makeRequest($this->getWeeblyApiDomain() . $url, [], 'GET');
     }
 
     /**
@@ -158,7 +158,7 @@ class WeeblyClient
      */
     public function post($url, $parameters=[])
     {
-        return $this->makeRequest(self::WEEBLY_API_DOMAIN.$url, $parameters, 'POST');
+        return $this->makeRequest($this->getWeeblyApiDomain().$url, $parameters, 'POST');
     }
 
     /**
@@ -170,7 +170,7 @@ class WeeblyClient
      */
     public function delete($url, $parameters=[])
     {
-        return $this->makeRequest(self::WEEBLY_API_DOMAIN.$url, $parameters, 'DELETE');
+        return $this->makeRequest($this->getWeeblyApiDomain().$url, $parameters, 'DELETE');
     }
 
     /**
@@ -182,7 +182,7 @@ class WeeblyClient
      */
     public function patch($url, $parameters=[])
     {
-        return $this->makeRequest(self::WEEBLY_API_DOMAIN.$url, $parameters, 'PATCH');
+        return $this->makeRequest($this->getWeeblyApiDomain().$url, $parameters, 'PATCH');
     }
 
     /**
@@ -194,7 +194,7 @@ class WeeblyClient
      */
     public function put($url, $parameters=[])
     {
-        return $this->makeRequest(self::WEEBLY_API_DOMAIN.$url, $parameters, 'PUT');
+        return $this->makeRequest($this->getWeeblyApiDomain().$url, $parameters, 'PUT');
     }
 
     /**
@@ -212,7 +212,7 @@ class WeeblyClient
         if (isset($callback_url) === true) {
             $url = $callback_url;
         } else {
-            $url = self::WEEBLY_DOMAIN.'/app-center/oauth/access_token';
+            $url = $this->getWeeblyDomain().'/app-center/oauth/access_token';
         }
 
         $result = $this->makeRequest($url, $this->prepareAccessTokenParams($authorization_code));
@@ -287,5 +287,29 @@ class WeeblyClient
         }
 
         return $this->curl_handler;
+    }
+
+    /**
+     * @return string
+     */
+    private function getWeeblyDomain()
+    {
+        if ($domain = getenv('WEEBLY_DOMAIN')) {
+            return $domain;
+        }
+
+        return self::WEEBLY_DOMAIN;
+    }
+
+    /**
+     * @return string
+     */
+    private function getWeeblyApiDomain()
+    {
+        if ($domain = getenv('WEEBLY_API_DOMAIN')) {
+            return $domain;
+        }
+
+        return self::WEEBLY_API_DOMAIN;
     }
 }
