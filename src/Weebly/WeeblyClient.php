@@ -141,24 +141,26 @@ class WeeblyClient
      * Makes authenticated API GET Request using provided URL, and parameters
      *
      * @param string $url
-     * @param array $parameters
+     * @param array $options
      * @return json $result
      */
-    public function get($url)
+    public function get($url, $options = [])
     {
-        return $this->makeRequest($this->getWeeblyApiDomain() . $url, [], 'GET');
+        return $this->makeRequest($this->getWeeblyApiDomain() . $url, [], $options, 'GET');
     }
 
     /**
      * Makes authenticated API POST Request using provided URL, and parameters
      *
      * @param string $url
-     * @param array $parameters
+     * @param array  $parameters
+     * @param array  $options
+     *
      * @return json $result
      */
-    public function post($url, $parameters=[])
+    public function post($url, $parameters=[], $options = [])
     {
-        return $this->makeRequest($this->getWeeblyApiDomain().$url, $parameters, 'POST');
+        return $this->makeRequest($this->getWeeblyApiDomain().$url, $parameters, $options, 'POST');
     }
 
     /**
@@ -166,11 +168,12 @@ class WeeblyClient
      *
      * @param string $url
      * @param array $parameters
+     * @param array $options
      * @return json $result
      */
-    public function delete($url, $parameters=[])
+    public function delete($url, $parameters=[], $options=[])
     {
-        return $this->makeRequest($this->getWeeblyApiDomain().$url, $parameters, 'DELETE');
+        return $this->makeRequest($this->getWeeblyApiDomain().$url, $parameters, $options, 'DELETE');
     }
 
     /**
@@ -178,11 +181,12 @@ class WeeblyClient
      *
      * @param string $url
      * @param array $parameters
+     * @param array $options
      * @return json $result
      */
-    public function patch($url, $parameters=[])
+    public function patch($url, $parameters=[], $options = [])
     {
-        return $this->makeRequest($this->getWeeblyApiDomain().$url, $parameters, 'PATCH');
+        return $this->makeRequest($this->getWeeblyApiDomain().$url, $parameters, $options,'PATCH');
     }
 
     /**
@@ -192,9 +196,9 @@ class WeeblyClient
      * @param array $parameters
      * @return json $result
      */
-    public function put($url, $parameters=[])
+    public function put($url, $parameters=[], $options=[])
     {
-        return $this->makeRequest($this->getWeeblyApiDomain().$url, $parameters, 'PUT');
+        return $this->makeRequest($this->getWeeblyApiDomain().$url, $parameters, $options,'PUT');
     }
 
     /**
@@ -240,11 +244,12 @@ class WeeblyClient
      *
      * @param string $url                    URL to make request to
      * @param (optional) array $paramenters  Array of parameters to pass
+     * @param (optional) array $options  Array of curl options to be merged with the default
      * @param (optional) string $method      HTTP method, defaults to 'POST'
      *
      * @return array $response
      */
-    private function makeRequest($url, $parameters = array(), $method = 'POST')
+    private function makeRequest($url, $parameters = array(), $options = array(), $method = 'POST')
     {
         $curl_handler = $this->getCurlHandler();
 
@@ -253,10 +258,10 @@ class WeeblyClient
             curl_reset($curl_handler);
             $options = [];
         } else {
-            $options = array(
+            $options = array_replace(array(
                 CURLOPT_CUSTOMREQUEST => $method,
                 CURLOPT_POSTFIELDS => json_encode($parameters)
-            );
+            ), $options);
         }
 
         $header = array();
@@ -270,7 +275,7 @@ class WeeblyClient
         $options[CURLOPT_HTTPHEADER] = $header;
 
         $options[CURLOPT_URL] = $url;
-        curl_setopt_array($curl_handler, $this->default_curl_options + $options);
+        curl_setopt_array($curl_handler, array_replace($this->default_curl_options, $options));
         $result = curl_exec($curl_handler);
         return json_decode($result);
     }
