@@ -258,10 +258,10 @@ class WeeblyClient
             curl_reset($curl_handler);
             $options = [];
         } else {
-            $options = array_merge(array(
+            $options = array(
                 CURLOPT_CUSTOMREQUEST => $method,
                 CURLOPT_POSTFIELDS => json_encode($parameters)
-            ), $options);
+            ) + $options;
         }
 
         $header = array();
@@ -275,7 +275,7 @@ class WeeblyClient
         $options[CURLOPT_HTTPHEADER] = $header;
 
         $options[CURLOPT_URL] = $url;
-        curl_setopt_array($curl_handler, array_merge($this->default_curl_options, $options));
+        curl_setopt_array($curl_handler, $this->default_curl_options + $options);
         $result = curl_exec($curl_handler);
         return json_decode($result);
     }
