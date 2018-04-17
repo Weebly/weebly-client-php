@@ -2,7 +2,7 @@
 
 Weebly Client is a basic PHP class that simplifies interactions with the Weebly REST API.
 
-You can find more details about how to get set-up with your Weebly project at <https://dev.weebly.com/get-started-with-developing-apps.html>.
+You can find more details about how to get set up with your Weebly project at <https://dev.weebly.com/get-started-with-developing-apps.html>.
 
 You can find details about the various endpoints that you may access with the Weebly Client at <https://dev.weebly.com/about-rest-apis.html>.
 
@@ -10,28 +10,28 @@ You can find details about the various endpoints that you may access with the We
 
 ### Instantiating the Client
 
-You may insantiate a new Weebly Client as such:
+You may instantiate a new Weebly Client as such:
 
 ```php
 $client = new \Weebly\WeeblyClient($client_id, $client_secret, $user_id, $site_id, $access_token);
 ```
 
 The only mandatory options that you must provide to the constructor are `$client_id` and `$client_secret`. You can find them both in your dev dashboard at <https://www.weebly.com/developer-admin> once you have registered a developer account with Weebly.
-Please store these credentials securely on your server, and do not expose them publically.
-The `$user_id`, `site_id` and `$access_token` are made accessible to you when a user grants your app permissions through the App OAuth flow. You do not need to provide these parameters unless you are accessing the OAuth methods. (i.e. _*Store APIs*_, _*Site APIs*_)
+Please store these credentials securely on your server, and do not expose them publicly.
+The `$user_id`, `site_id` and `$access_token` are made accessible to you when a user grants your app permissions through the App OAuth flow. You do not need to provide these parameters unless you are accessing the OAuth methods. (_e.g._ *Store APIs*, *Site APIs*)
 
 You can find more information about the OAuth flow at <https://dev.weebly.com/authentication-with-oauth2.html>.
 
 #### Authorizing through the OAuth Flow
 The WeeblyClient provides a few helper methods to aid you through the OAuth flow.
-    * `getAuthorizationUrl` Returns a properly formatted authorization URL that you should respond with after our servers initiate the OAuth flow.
-    * `getAccessToken` Retrieves the access token once you have obtained the necessary authorization code in OAuth.
+* `getAuthorizationUrl` Returns a properly formatted authorization URL that you should respond with after our servers initiate the OAuth flow.
+* `getAccessToken` Retrieves the access token once you have obtained the necessary authorization code in OAuth.
 
 You can find about how to configure the OAuth flow and how to obtain the `$user_id`, `site_id` and `$access_token` at <https://dev.weebly.com/configure-oauth.html>.
 
 
 ### Making API Calls
-We have provided simplified functions to make requests with the GET, POST, DELETE, PATCH and PUT methods.
+We have provided simplified functions to make requests with the GET, POST, DELETE, PATCH, and PUT methods.
 
 #### Examples:
 Get Site Details:
