@@ -216,7 +216,10 @@ class WeeblyClient
         }
 
         $result = $this->makeRequest($url, $this->prepareAccessTokenParams($authorization_code));
-        return $result->access_token;
+        
+        $this->access_token = (isset($result->access_token)) ? $result->access_token : null;
+
+        return $result;
     }
 
     /**
